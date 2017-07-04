@@ -1,0 +1,31 @@
+<script>
+var n = 9;
+// print * | and the first line 
+var b = "* |"
+for(var first=1; first <= n; first++) 
+{
+	b=b+"  "+first;
+}
+console.log(b+" ");
+// print the socond line "---"
+var c="---";
+for(var second=1; second <= n; second++){
+	c=c+"---";
+}
+console.log(c);
+// print the multiplication table 
+for(var i =1; i <= n; i++){
+	var r="";
+	for(var j = 1; j <= n; j++){
+		if(j*i < 10){
+			r=r+"  "+j*i;
+		}
+		else
+		{
+			r=r+" "+j*i;
+		}
+	}
+	console.log(i+" |"+r);
+}
+
+</script>

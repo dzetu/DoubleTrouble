@@ -1,0 +1,21 @@
+<script>
+var s = "doubletrouble";
+var vocale = "aeiou";
+var result = "";
+for(var i = 0; i < s.length; i++)
+{
+	var vocala = false;
+	for(var j=0; j < vocale.length; j++)
+	{ 
+		if(s[i] == vocale[j])
+		{
+			vocala = true;
+		}
+	}
+	if (vocala == false)
+	{
+		result = result + s[i];
+	}
+}
+console.log(result);
+</script>

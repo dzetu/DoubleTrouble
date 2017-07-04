@@ -1,0 +1,14 @@
+<script>
+var n=12;
+for (var a = 1; a <= n; a++) {
+   var prime = true;
+   for (var m = 2; m <= a - 1; m++) {
+      if (a % m == 0) {
+         prime = false;
+      }
+   }
+   if (prime == true) {
+      console.log(a);
+   }
+}
+</script>
