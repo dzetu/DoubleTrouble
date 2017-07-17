@@ -1,0 +1,25 @@
+<script>
+var min_length = function(p){
+	return p.length>=4;
+}
+console.log(min_length("virygyhgv"));
+var isdigit = function(c){
+	var d = "0123456789";
+	for(var j=0; j<d.length; j++){
+		if(c==d[j]){
+			return true;
+		}
+	}
+	return false;
+}
+var has_digits = function(p){
+	for(var i=0; i<p.length; i++){
+		if(isdigit(p[i])){
+			return true;
+		}
+	}
+	return false;
+}
+console.log(isdigit("6"))
+console.log(has_digits("sdfg"))
+</script>
