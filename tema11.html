@@ -2,24 +2,52 @@
 var min_length = function(p){
 	return p.length>=4;
 }
-console.log(min_length("virygyhgv"));
-var isdigit = function(c){
-	var d = "0123456789";
-	for(var j=0; j<d.length; j++){
-		if(c==d[j]){
+var is_something = function(c,l){
+	for(var j=0; j<l.length; j++){
+		if(c==l[j]){
 			return true;
 		}
 	}
 	return false;
 }
-var has_digits = function(p){
+var has_something = function(p, l){
 	for(var i=0; i<p.length; i++){
-		if(isdigit(p[i])){
+		if(is_something(p[i], l)){
 			return true;
 		}
 	}
 	return false;
 }
-console.log(isdigit("6"))
-console.log(has_digits("sdfg"))
+
+var has_digits = function(p){
+	return has_something(p, "0123456789");
+}
+var has_uppercase_letter = function(p){
+	return has_something(p, "ABCDEFGHIJKLMNOPQRSTUVWXYZ");
+}
+
+var has_lowercase_letter = function(p){
+	return has_something(p, "abcdefghijklmnopqrstuvwxyz");
+}
+var has_symbols = function(p){
+	return has_something(p, "!@#$%^&*_+|:;<>?");
+}
+var is_strong = function(p){
+	if(min_length(p)){
+		if(has_digits(p)){
+			if(has_uppercase_letter(p)){
+				if(has_lowercase_letter(p)){
+					if(has_symbols(p)){
+						return true;
+					}
+				}
+			}
+		}
+	}
+	return false;
+}
+var a = ["adsdf","A2&saht","a2&h","", "A#4"];
+for(var i = 0; i<a.length; i++){
+	console.log(a[i], is_strong(a[i]));
+}
 </script>

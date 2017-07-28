@@ -1,9 +1,56 @@
 <script>
-var n="apple sauce";
-var r="";
-for(var a=0; a < n.length; a++)
-{ 
-	
+var char_position = function(c,s, start_pos){ //caufa un caracter intr-un string si intoarce pozitia lui 
+	for(var j=start_pos; j<s.length; j++){ //parcurge tot stringul incepand cu start_pos
+		if(s[j]==c){ //verificam daca caracterul se afla la pozitia j din string
+			return j; // intoarcem pozitia caracterului in string
+		}
+	}
+	return false; //nu s-a gasit caracterul in string 
 }
+var string_match = function(p, s, start_pos){
+	if((s.length-start_pos) < p.length){
+		return false;
+	}
+	for(var i=0; i<p.length; i++){
+		if(p[i] != s[start_pos + i]){
+			return false;
+		}
+	}
+	return true;	
+}
+var string_position = function(p,s){
+	if(p.length==0){
+		return 0;
+	}
+	var start_pos = 0;
+	while(start_pos<s.length){
+		var pos = char_position(p[0], s, start_pos)
+		if(pos==false){
+			return false;
+		}
+		var match = string_match(p, s, pos)
+		if(match)
+		{
+			return pos;
+		}
+		else
+		{
+			start_pos = pos+1;
+		}
+	}
+	return false;
+}
+console.log(char_position("j","hey kar poe",0));
+console.log(char_position("j","hey jar koe",0));
+console.log(char_position("","",0));
 
+console.log(string_match("joe","hey jar joe",8));
+console.log(string_match("joe","hey jon jhx",4));
+console.log(string_match("joe","hey jo",4));
+console.log(string_match("","",0));
+
+console.log(string_position("jhx","hey joe jhx"));
+console.log(string_position("joe","hey joe jhx"));
+console.log(string_position("joe","hey jon jhx"));
+console.log(string_position("",""));
 </script>

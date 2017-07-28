@@ -1,0 +1,27 @@
+<!--
+<script>
+var x = 0;
+var y = 1;
+var p = 12;
+while(true){
+	var s = x+y;
+	x = y;
+	y = s;
+	if(x > p){
+		break;
+	}
+	console.log(x);
+}
+</script>
+-->
+<script>
+var p = 12;
+var f = function(x,y){
+	if(x > p){
+		return;
+	}
+	console.log(x);
+	f(y, x+y);
+}
+f(0,1);
+</script>

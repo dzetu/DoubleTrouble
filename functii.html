@@ -1,3 +1,4 @@
+<!--
 <script>
 var spaces = function(x){
 	var s="";
@@ -13,4 +14,15 @@ for(var a=0; a<n.length; a++)
 	console.log(spaces(a) + n[a]);
 }
 
+</script>
+-->
+<script>
+var f = function(n){
+	if(n<1){
+		return;
+	}
+	console.log(n)
+	f(n-1);
+}
+f(3);
 </script>
