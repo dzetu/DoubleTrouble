@@ -1,16 +1,75 @@
+<canvas id="myCanvas" width="600" height="400"></canvas>
 <script> 
 //to do:
 // generam litere -Generam coloanele -generam o coloana *generam un caracter random
 //desenam litere - generam o litara la anumite coordonate x,y -desenam o coloana intr-o anumite stare -sa desenam toate coloanele
 //animatia
-var make_column = function(num_chars){
-	
+
+var screen = [];
+var num_columns = 50;
+var num_rows = 50;
+
+var make_column = function(){
+	var y = Math.floor( Math.random()* (num_columns - 1));
+	return {"y":y, "chars":[]}	
 }
+
+for(var i = 1; i <= num_columns; i++){
+	var column = make_column();
+	screen.push(column);
+}
+
 var random_letter = function(){
 	var s = "abcdefghijklmnopqrstuvwxyz2667859@##$%^&*";
 	var i = Math.random() * (s.length - 1);
 	i = Math.floor(i);
 	return s[i];
 }
-console.log(random_letter());
+
+var grow_column = function(column){
+	column.chars.push(random_letter());
+}
+
+var grow_screen = function(){
+	for(var j = 0; j < num_columns; j++){
+		var col = screen[j];
+		grow_column(col);
+	}
+}
+grow_screen();
+
+var c = document.getElementById("myCanvas");
+var ctx = c.getContext("2d");
+ctx.font = "10px Monospace";
+var draw_char = function(c, x, y){
+	ctx.fillText(c, x*10, (y*10)+10);
+}
+
+var draw_column = function(col, x){
+	var chars = col.chars;
+	var y0 = col.y;
+	for(var i = 0; i < chars.length; i++){
+		var c = chars[i];
+		draw_char(c,x,y0+i);
+	}
+}
+
+var erase_screen = function(){
+	ctx.clearRect(0,0,c.width, c.height)
+}
+
+var draw_screen = function(){
+	for(var x=0; x < num_columns; x++){
+		var col = screen[x];
+		draw_column(col, x);
+	}
+}
+
+var each_second = function(){
+	grow_screen();
+	erase_screen();
+	draw_screen();
+}
+setInterval(each_second, 100);
+
 </script>
