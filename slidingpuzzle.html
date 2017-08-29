@@ -1,0 +1,109 @@
+<canvas 
+	id="myCanvas"
+	width="600" 
+	height="300"></canvas>
+<script> 
+/*
+to do:
+-algoritm pentru evitarea configuratiilor necastigatoare
+-sa se afiseze "ai castigat!"
+-miscarea cu animatii 
+-patratelul gol la o pozitie random
+-sa ramana acelasi cand dam refresh
+-buton restart 
+-score cate mutari am facut
+-buton unlimited undo
+-top score
+-jucam cu mouse-ul highligth piesele care se pot muta 
+-centrare tabla
+-generalizam jocul la n*m
+-sa folosim o imagine taiata in patratele 
+-sa mearga cu orice imagine de pe instagram
+-inloc de numere pui un degrade
+*/
+var canvas = document.getElementById("myCanvas");
+var ctx = canvas.getContext("2d");
+ctx.font = "30px Arial";
+var draw_square = function(x,y) {
+	ctx.beginPath();
+	ctx.rect(x,y,50,50);
+	ctx.stroke();
+}
+var scren = [];
+var a = [];
+for(var i = 1; i <= 15; i++){
+	a.push(i);
+} 
+var random_num = function(){
+	var i = Math.random()*(a.length-1);
+	i = Math.floor(i);
+	var v = a[i];
+	a.splice(i, 1);
+	return v;
+}
+
+for(var i = 1; i <= 4; i++){
+	var line = [];
+	for(var j = 1; j <= 4; j++){
+		var r = random_num()||0;
+		line.push(r);
+	}
+	scren.push(line);
+}
+console.log(scren);
+var n = 4;
+var redraw_screen = function(){
+	ctx.beginPath();
+	ctx.clearRect(0,0,canvas.width, canvas.height)
+	for(var j = 0; j < n; j++){
+		for(var i = 0; i < n; i++){
+			var r = scren[j][i];
+			if(r){
+				ctx.rect(10.5+(60*i),0.5+(60*j),50,50);
+				ctx.stroke();
+				var adjustment = (r >= 10 ? 10 : 0);
+				ctx.fillText(r,(29.5-adjustment)+(60*i),35.5+(60*j));	
+			}
+		}		
+	}
+}
+redraw_screen();
+var x = 3;
+var y = 3; 
+var key_down = function(event){
+	if(event.key=="ArrowUp"){
+		if(y<3){
+		scren[y][x]=scren[y+1][x];
+		scren[y+1][x]=0;
+		y=y+1;
+		redraw_screen();
+		}	
+	}
+	else if(event.key=="ArrowDown"){
+		if(y>0){
+		scren[y][x]=scren[y-1][x];
+		scren[y-1][x]=0;
+		y=y-1;
+		redraw_screen();
+		}
+	}
+	else if(event.key=="ArrowRight"){
+		if(x>0){
+		scren[y][x]=scren[y][x-1];
+		scren[y][x-1]=0;
+		x=x-1;
+		redraw_screen();
+		}
+	}
+	else if(event.key=="ArrowLeft"){
+		if(x<3){
+		scren[y][x]=scren[y][x+1];
+		scren[y][x+1]=0;
+		x=x+1;
+		redraw_screen();
+		}
+	}
+}		
+addEventListener("keydown", key_down)	
+
+</script>

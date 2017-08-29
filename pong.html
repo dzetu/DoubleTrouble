@@ -1,0 +1,40 @@
+<canvas 
+	id="myCanvas"
+	width="600" 
+	height="300"
+	onmousemove="mouse_move(event)"></canvas>
+<script> 
+//to do:
+var mx = 1;
+var my = 1; 
+var canvas = document.getElementById("myCanvas");
+var ctx = canvas.getContext("2d");
+
+var erase_screen = function(){
+	ctx.clearRect(0,0,canvas.width, canvas.height);
+}
+
+var draw_player = function(x,y) {
+	ctx.beginPath();
+	ctx.rect(x,y,15,50);
+	ctx.fill();
+}
+
+var mouse_move = function(e){
+	mx = e.clientX;
+    my = e.clientY;
+    if(my >= canvas.height - 50){
+    	my = canvas.height - 50;
+    } 
+}
+
+var each_frame = function() {
+	erase_screen();
+	ctx.beginPath();
+	ctx.rect(0,0,canvas.width,canvas.height);
+	ctx.stroke();
+	draw_player(canvas.width-15,my);
+}
+setInterval(each_frame, 1/30*1000);
+
+</script> 
