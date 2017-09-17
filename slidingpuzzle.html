@@ -1,109 +1,181 @@
-<canvas 
+<canvas
 	id="myCanvas"
-	width="600" 
+	width="600"
 	height="300"></canvas>
-<script> 
+<script>
 /*
 to do:
 -algoritm pentru evitarea configuratiilor necastigatoare
 -sa se afiseze "ai castigat!"
--miscarea cu animatii 
--patratelul gol la o pozitie random
+-miscarea cu animatii
 -sa ramana acelasi cand dam refresh
--buton restart 
+-buton restart
 -score cate mutari am facut
 -buton unlimited undo
 -top score
--jucam cu mouse-ul highligth piesele care se pot muta 
+-jucam cu mouse-ul highligth piesele care se pot muta
 -centrare tabla
 -generalizam jocul la n*m
--sa folosim o imagine taiata in patratele 
+-sa folosim o imagine taiata in patratele
 -sa mearga cu orice imagine de pe instagram
 -inloc de numere pui un degrade
 */
+
+// luam obiectul canvas corespunzator cu elementul myCanvas
 var canvas = document.getElementById("myCanvas");
+// luam un obiect prin care putem sa desenam
 var ctx = canvas.getContext("2d");
+// setam fontul cu care desenam
 ctx.font = "30px Arial";
+
+// definim o functie care deseneaza un patratel
 var draw_square = function(x,y) {
-	ctx.beginPath();
-	ctx.rect(x,y,50,50);
-	ctx.stroke();
+	ctx.beginPath();     // incepem un nou path
+	ctx.rect(x,y,50,50); // trasam patratelul in path
+	ctx.stroke();        // desenam outline-ul pathului
 }
-var scren = [];
-var a = [];
-for(var i = 1; i <= 15; i++){
-	a.push(i);
-} 
-var random_num = function(){
-	var i = Math.random()*(a.length-1);
-	i = Math.floor(i);
-	var v = a[i];
-	a.splice(i, 1);
+
+// declaram variabila in care o sa stocam numerele
+// board: [[n,...],...]
+var board;
+
+// definim o functie care creaza un array cu 16 numere de la 0 la 15.
+// ii zicem palarie fiindca o sa extragem din ea numere de la o pozitie random.
+var create_hat = function(){
+	var a = [];   // cream un array gol
+	// adaugam 16 numere in array
+	for(var i = 0; i <= 15; i++){
+		a.push(i);
+	}
+	return a; // intoarcem array-ul
+}
+
+// definim o functie care extrage un numar de la o pozitie random dintr-un
+// array. din cauza ca array-ul contine numere unice, efectul functiei este
+// acela de a obtine un numar random unic.
+// pentru un array gol functia intoarce undifined
+var random_num = function(hat){
+	// generam un numar random care sa fie o pozitie valida din array
+	var i = Math.floor(Math.random()*(hat.length-1));
+	// retinem valoarea din array de la pozitia generata ca sa o putem intoarce
+	var v = hat[i];
+	// stergem valoarea aleasa pentru a nu o mai alege inca o data!!
+	hat.splice(i, 1);
+	// intoarcem valoarea
 	return v;
 }
 
-for(var i = 1; i <= 4; i++){
-	var line = [];
-	for(var j = 1; j <= 4; j++){
-		var r = random_num()||0;
-		line.push(r);
+// definim o functie care inlocuieste tabla cu o tabla noua.
+// in tabla noua adaugam 4 linii a cate 4 numere pe fiecare linie
+// numerele fiing cele generate de random_num()
+var recreate_board = function(){
+	board = []; // inlocuim tabla cu un array gol
+	var hat = create_hat(); // generam o palarie cu numere unice
+	// adauga 4 linii cu numerel la tabla de joc
+	for(var i = 1; i <= 4; i++){
+		var line = [];
+		// adauga 4 numere random la limie
+		for(var j = 1; j <= 4; j++){
+			var r = random_num(hat);
+			line.push(r);
+		}
+		board.push(line);
 	}
-	scren.push(line);
 }
-console.log(scren);
-var n = 4;
-var redraw_screen = function(){
-	ctx.beginPath();
-	ctx.clearRect(0,0,canvas.width, canvas.height)
-	for(var j = 0; j < n; j++){
-		for(var i = 0; i < n; i++){
-			var r = scren[j][i];
-			if(r){
-				ctx.rect(10.5+(60*i),0.5+(60*j),50,50);
-				ctx.stroke();
-				var adjustment = (r >= 10 ? 10 : 0);
-				ctx.fillText(r,(29.5-adjustment)+(60*i),35.5+(60*j));	
+recreate_board();
+
+// definim of functie care gaseste coordonatele in tabla ale patratelului gol.
+var find_empty_cell_pos = function() {
+	for(var x = 0; x <=3; x++){
+		for(var y = 0; y <= 3; y++){
+			if(board[y][x]==0){
+				return {x: x, y: y};
 			}
-		}		
+		}
 	}
 }
-redraw_screen();
-var x = 3;
-var y = 3; 
-var key_down = function(event){
-	if(event.key=="ArrowUp"){
-		if(y<3){
-		scren[y][x]=scren[y+1][x];
-		scren[y+1][x]=0;
-		y=y+1;
-		redraw_screen();
-		}	
-	}
-	else if(event.key=="ArrowDown"){
-		if(y>0){
-		scren[y][x]=scren[y-1][x];
-		scren[y-1][x]=0;
-		y=y-1;
-		redraw_screen();
+
+// definim o functie care redeseneaza tabla de joc
+var redraw_board = function(){
+	ctx.beginPath(); // incepem un nou path
+	ctx.clearRect(0,0,canvas.width, canvas.height) // stergem tot canvasul
+	// desenam tabla de joc (fiecare patratel)
+	for(var j = 0; j < 4; j++){ // j:linia
+		for(var i = 0; i < 4; i++){ // i:coloana
+			var r = board[j][i]; // luam numarul din tabla de la pozitia (j,i)
+			if(r){ // evitam desenarea patratelului gol
+				ctx.rect(10.5+(60*i),0.5+(60*j),50,50); // traseaza patratelul
+				ctx.stroke(); // deseneaza patratelul
+				var adjustment = (r >= 10 ? 10 : 0);
+				ctx.fillText(r,(29.5-adjustment)+(60*i),35.5+(60*j)); //adaugam cifrele in patratele
+			}
 		}
 	}
-	else if(event.key=="ArrowRight"){
-		if(x>0){
-		scren[y][x]=scren[y][x-1];
-		scren[y][x-1]=0;
-		x=x-1;
-		redraw_screen();
+}
+redraw_board(); // redesenam ecranul
+var p = find_empty_cell_pos()
+var x = p.x;
+var y = p.y;
+
+var key_down = function(event){ //
+	if(event.key=="ArrowUp"){ // daca evenimentul este ArrowUp
+		if(y<3){ // daca y este mai mic ca 3 (sa nu iasa din cadru)
+		board[y][x]=board[y+1][x];// mutam pozitia pe axa y cu 1
+		board[y+1][x]=0; // initializam noua valoare cu 0
+		y=y+1; // crestem valoarea lui y cu unu
+		redraw_board(); // redesanam ecranul
 		}
 	}
-	else if(event.key=="ArrowLeft"){
-		if(x<3){
-		scren[y][x]=scren[y][x+1];
-		scren[y][x+1]=0;
-		x=x+1;
-		redraw_screen();
+	else if(event.key=="ArrowDown"){ // daca enevimentul este ArrowDown
+		if(y>0){ // daca y este mai mare ca 0 (sa ramana in cadru)
+		board[y][x]=board[y-1][x]; // mutam pozitia pe axa y cu -1
+		board[y-1][x]=0; // initializam noua valoare cu 0
+		y=y-1; // scadem valoarea lui y cu 1
+		redraw_board(); // redesenam ecranul
 		}
 	}
-}		
-addEventListener("keydown", key_down)	
+	else if(event.key=="ArrowRight"){// daca enevimentul este ArrowRight
+		if(x>0){// daca y este mai mare ca 0 (sa ramana in cadru)
+		board[y][x]=board[y][x-1];// mutam pozitia pe axa x cu -1
+		board[y][x-1]=0;// initializam noua valoare cu 0
+		x=x-1;// scadem valoarea lui x cu 1
+		redraw_board();// redesenam ecranul
+		}
+	}
+	else if(event.key=="ArrowLeft"){// daca enevimentul este ArrowLeft
+		if(x<3){// daca y este mai mic ca 3 (sa nu iasa din cadru)
+		board[y][x]=board[y][x+1];// mutam pozitia pe axa x cu 1
+		board[y][x+1]=0;// initializam noua valoare cu 0
+		x=x+1;// crestem valoarea lui x cu unu
+		redraw_board();// redesenam ecranul
+		}
+	}
+}
+addEventListener("keydown", key_down) // inregistrez un ascultator in momentul in care se executa o functie
+var make_array = function(){
+	var m = [];
+	for(var i = 0; i < n; i++){
+		for(var j = 0; j < n; j++){
+			if(board[i][j] != 0){
+				m.push(board[i][j]);
+			}
+		}
+	}
+	return m;
+}
+var inversion_count = function(arr){ //
+	var count = 0;
+	for(var i = 0; i < arr.length-1; i++){
+		for(var j = i+i; j < arr.length; j++){
+			if(arr[i] > arr[j]){
+				count ++;
+			}
+		}
+	}
+	return count;
+}
+
+
+console.log(inversion_count(make_array()));
 
 </script>
