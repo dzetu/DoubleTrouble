@@ -5,7 +5,6 @@
 <script>
 /*
 to do:
--algoritm pentru evitarea configuratiilor necastigatoare
 -sa se afiseze "ai castigat!"
 -miscarea cu animatii
 -sa ramana acelasi cand dam refresh
@@ -20,25 +19,21 @@ to do:
 -sa mearga cu orice imagine de pe instagram
 -inloc de numere pui un degrade
 */
-
 // luam obiectul canvas corespunzator cu elementul myCanvas
 var canvas = document.getElementById("myCanvas");
 // luam un obiect prin care putem sa desenam
 var ctx = canvas.getContext("2d");
 // setam fontul cu care desenam
 ctx.font = "30px Arial";
-
 // definim o functie care deseneaza un patratel
 var draw_square = function(x,y) {
 	ctx.beginPath();     // incepem un nou path
 	ctx.rect(x,y,50,50); // trasam patratelul in path
 	ctx.stroke();        // desenam outline-ul pathului
 }
-
 // declaram variabila in care o sa stocam numerele
 // board: [[n,...],...]
 var board;
-
 // definim o functie care creaza un array cu 16 numere de la 0 la 15.
 // ii zicem palarie fiindca o sa extragem din ea numere de la o pozitie random.
 var create_hat = function(){
@@ -49,7 +44,6 @@ var create_hat = function(){
 	}
 	return a; // intoarcem array-ul
 }
-
 // definim o functie care extrage un numar de la o pozitie random dintr-un
 // array. din cauza ca array-ul contine numere unice, efectul functiei este
 // acela de a obtine un numar random unic.
@@ -64,10 +58,9 @@ var random_num = function(hat){
 	// intoarcem valoarea
 	return v;
 }
-
 // definim o functie care inlocuieste tabla cu o tabla noua.
 // in tabla noua adaugam 4 linii a cate 4 numere pe fiecare linie
-// numerele fiing cele generate de random_num()
+// numerele fiind cele generate de random_num()
 var recreate_board = function(){
 	board = []; // inlocuim tabla cu un array gol
 	var hat = create_hat(); // generam o palarie cu numere unice
@@ -82,7 +75,6 @@ var recreate_board = function(){
 		board.push(line);
 	}
 }
-recreate_board();
 
 // definim of functie care gaseste coordonatele in tabla ale patratelului gol.
 var find_empty_cell_pos = function() {
@@ -94,7 +86,6 @@ var find_empty_cell_pos = function() {
 		}
 	}
 }
-
 // definim o functie care redeseneaza tabla de joc
 var redraw_board = function(){
 	ctx.beginPath(); // incepem un nou path
@@ -112,50 +103,58 @@ var redraw_board = function(){
 		}
 	}
 }
-redraw_board(); // redesenam ecranul
-var p = find_empty_cell_pos()
-var x = p.x;
-var y = p.y;
 
+var check_finished = function(){
+	if(is_finished()){
+		ctx.fillText("YOU WIN!", 50,50)
+	}
+}
+
+var x;
+var y;
 var key_down = function(event){ //
 	if(event.key=="ArrowUp"){ // daca evenimentul este ArrowUp
 		if(y<3){ // daca y este mai mic ca 3 (sa nu iasa din cadru)
-		board[y][x]=board[y+1][x];// mutam pozitia pe axa y cu 1
-		board[y+1][x]=0; // initializam noua valoare cu 0
-		y=y+1; // crestem valoarea lui y cu unu
-		redraw_board(); // redesanam ecranul
+			board[y][x]=board[y+1][x];// mutam pozitia pe axa y cu 1
+			board[y+1][x]=0; // initializam noua valoare cu 0
+			y=y+1; // crestem valoarea lui y cu unu
+			redraw_board(); // redesanam ecranul
+			check_finished();
 		}
 	}
 	else if(event.key=="ArrowDown"){ // daca enevimentul este ArrowDown
-		if(y>0){ // daca y este mai mare ca 0 (sa ramana in cadru)
-		board[y][x]=board[y-1][x]; // mutam pozitia pe axa y cu -1
-		board[y-1][x]=0; // initializam noua valoare cu 0
-		y=y-1; // scadem valoarea lui y cu 1
-		redraw_board(); // redesenam ecranul
+			if(y>0){ // daca y este mai mare ca 0 (sa ramana in cadru)
+			board[y][x]=board[y-1][x]; // mutam pozitia pe axa y cu -1
+			board[y-1][x]=0; // initializam noua valoare cu 0
+			y=y-1; // scadem valoarea lui y cu 1
+			redraw_board(); // redesenam ecranul
+			check_finished();
 		}
 	}
 	else if(event.key=="ArrowRight"){// daca enevimentul este ArrowRight
 		if(x>0){// daca y este mai mare ca 0 (sa ramana in cadru)
-		board[y][x]=board[y][x-1];// mutam pozitia pe axa x cu -1
-		board[y][x-1]=0;// initializam noua valoare cu 0
-		x=x-1;// scadem valoarea lui x cu 1
-		redraw_board();// redesenam ecranul
+			board[y][x]=board[y][x-1];// mutam pozitia pe axa x cu -1
+			board[y][x-1]=0;// initializam noua valoare cu 0
+			x=x-1;// scadem valoarea lui x cu 1
+			redraw_board();// redesenam ecranul
+			check_finished();
 		}
 	}
 	else if(event.key=="ArrowLeft"){// daca enevimentul este ArrowLeft
 		if(x<3){// daca y este mai mic ca 3 (sa nu iasa din cadru)
-		board[y][x]=board[y][x+1];// mutam pozitia pe axa x cu 1
-		board[y][x+1]=0;// initializam noua valoare cu 0
-		x=x+1;// crestem valoarea lui x cu unu
-		redraw_board();// redesenam ecranul
+			board[y][x]=board[y][x+1];// mutam pozitia pe axa x cu 1
+			board[y][x+1]=0;// initializam noua valoare cu 0
+			x=x+1;// crestem valoarea lui x cu unu
+			redraw_board();// redesenam ecranul
+			check_finished();
 		}
 	}
 }
 addEventListener("keydown", key_down) // inregistrez un ascultator in momentul in care se executa o functie
-var make_array = function(){
+var make_array = function(){ // colectam toate patrateleleintr-un singur array
 	var m = [];
-	for(var i = 0; i < n; i++){
-		for(var j = 0; j < n; j++){
+	for(var i = 0; i < 4; i++){
+		for(var j = 0; j < 4; j++){
 			if(board[i][j] != 0){
 				m.push(board[i][j]);
 			}
@@ -163,6 +162,7 @@ var make_array = function(){
 	}
 	return m;
 }
+
 var inversion_count = function(arr){ //
 	var count = 0;
 	for(var i = 0; i < arr.length-1; i++){
@@ -175,7 +175,69 @@ var inversion_count = function(arr){ //
 	return count;
 }
 
+//daca patratica goala se afla pe randul par si inversion count este impar este solvable (numaratoarea incepe de la 0-3)
+//daca patratica goala se afla pe randul impar si inversion count este par este solvable
+var row_of_empty_square = function(){
+	for(var j = 0; j <= 3; j++){
+		for(var i = 0; i <= 3; i++){
+			var e = board[j][i];
+			if(e == 0){
+				return j;
+			}
+		}
+	}
+}
 
-console.log(inversion_count(make_array()));
+var is_solvable = function(){
+	var arr = make_array();
+	var inv = inversion_count(arr);
+	var row = row_of_empty_square();
+	if(inv % 2 == 0 && row % 2 != 0){
+		return true;
+	}
+	if(inv % 2 != 0 && row % 2 == 0){
+		return true;
+	}
+	return false;
+}
+
+do{
+	recreate_board();
+}
+while(!is_solvable());
+
+/*
+board = [
+	[1,2,3,4],
+	[5,6,7,8],
+	[9,10,11,12],
+	[13,14,0,15]
+]
+*/
+
+var p = find_empty_cell_pos()
+x = p.x;
+y = p.y;
+
+redraw_board();
+var is_finished = function(){
+	var n = 0;
+	for(var j = 0; j <= 3; j++){
+		for(var i = 0; i <= 3; i++){
+			n++;
+			if(n == 16){
+				n = 0;
+			}
+			console.log(n);
+			if(board[j][i] != n){
+				return false;
+			}
+		}
+	}
+	return true;
+}
+is_finished();
+
+
 
 </script>
