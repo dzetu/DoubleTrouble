@@ -26,10 +26,10 @@ var ctx = canvas.getContext("2d");
 // setam fontul cu care desenam
 ctx.font = "30px Arial";
 // definim o functie care deseneaza un patratel
-v
-
-
-// desenam outline-ul pathului
+var draw_square = function(x,y) {
+	ctx.beginPath();     // incepem un nou path
+	ctx.rect(x,y,50,50); // trasam patratelul in path
+	ctx.stroke();        // desenam outline-ul pathului
 }
 // declaram variabila in care o sa stocam numerele
 // board: [[n,...],...]
