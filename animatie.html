@@ -1,0 +1,38 @@
+<canvas
+	id="myCanvas"
+	width="600"
+	height="300"></canvas>
+<script>
+var canvas = document.getElementById("myCanvas");
+var ctx = canvas.getContext("2d");
+
+var animate = function(f, stop_sec, fps){
+	var interval;
+	var num_frames = 0;
+	var each_frame = function(){
+		f(num_frames);
+		num_frames++;
+		if(num_frames == Math.round(fps*stop_sec)){
+			clearInterval(interval);
+		}
+	}
+	interval = setInterval(each_frame, 1000/fps);
+}
+
+
+
+var draw_square = function(x,y) {
+	ctx.beginPath();
+	ctx.clearRect(0,0,canvas.width, canvas.height);
+	ctx.beginPath();
+	ctx.rect(x,y,50,50);
+	ctx.fillStyle = "green";
+	ctx.fill();
+}
+
+var each_frame = function(i) {
+	draw_square(50 + i * 2, 50);
+}
+animate(each_frame, 2, 100);
+
+</script>
