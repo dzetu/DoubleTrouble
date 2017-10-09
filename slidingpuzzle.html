@@ -106,7 +106,9 @@ var redraw_board = function(){
 
 var check_finished = function(){
 	if(is_finished()){
-		ctx.fillText("YOU WIN!", 50,50)
+		ctx.font = "40px Comic Sans MS";
+		ctx.fillStyle = "red";
+		ctx.fillText("YOU WIN!", 25,130)
 	}
 }
 
@@ -151,6 +153,19 @@ var key_down = function(event){ //
 	}
 }
 addEventListener("keydown", key_down) // inregistrez un ascultator in momentul in care se executa o functie
+var mouse_move = function(event){
+	console.log(event);
+}
+mouse_move();
+var mx = clientX;
+var my = clientY; // coordonatele mouseului
+//hittest(mx, my) = {x: , y: }; hittestsquare
+//hittestsquare(x,y,mx,my)
+// doua ffor uri sa parcurgem fiecare patratel
+// mx = mx+x
+// mx = mx+x0
+// x = mx/d
+addEventListener("mousemove", mouse_move)
 var make_array = function(){ // colectam toate patrateleleintr-un singur array
 	var m = [];
 	for(var i = 0; i < 4; i++){
@@ -214,6 +229,7 @@ board = [
 	[13,14,0,15]
 ]
 */
+
 
 var p = find_empty_cell_pos()
 x = p.x;
