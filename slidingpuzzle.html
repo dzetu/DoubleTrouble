@@ -1,3 +1,6 @@
+<style>
+html, body { margin: 0;}
+</style>
 <canvas
 	id="myCanvas"
 	width="600"
@@ -86,6 +89,10 @@ var find_empty_cell_pos = function() {
 		}
 	}
 }
+
+var board_x0 = 20.5;
+var board_y0 = 20.5;
+
 // definim o functie care redeseneaza tabla de joc
 var redraw_board = function(){
 	ctx.beginPath(); // incepem un nou path
@@ -93,12 +100,20 @@ var redraw_board = function(){
 	// desenam tabla de joc (fiecare patratel)
 	for(var j = 0; j < 4; j++){ // j:linia
 		for(var i = 0; i < 4; i++){ // i:coloana
-			var r = board[j][i]; // luam numarul din tabla de la pozitia (j,i)
-			if(r){ // evitam desenarea patratelului gol
-				ctx.rect(10.5+(60*i),0.5+(60*j),50,50); // traseaza patratelul
+			// luam numarul din tabla de la pozitia (j,i)
+			var r = board[j][i];
+			if(r){
+				// evitam desenarea patratelului gol
+				var sx = board_x0 + 60 * i;
+				var sy = board_y0 + 60 * j;
+				ctx.rect(sx, sy, 50, 50);
+				// traseaza patratelul
 				ctx.stroke(); // deseneaza patratelul
 				var adjustment = (r >= 10 ? 10 : 0);
-				ctx.fillText(r,(29.5-adjustment)+(60*i),35.5+(60*j)); //adaugam cifrele in patratele
+				//adaugam cifrele in patratele
+				var tx = board_x0 + (18 - adjustment) + 60 * i;
+				var ty = board_y0 + 35 + 60 * j;
+				ctx.fillText(r, tx, ty);
 			}
 		}
 	}
@@ -152,21 +167,40 @@ var key_down = function(event){ //
 		}
 	}
 }
-addEventListener("keydown", key_down) // inregistrez un ascultator in momentul in care se executa o functie
-var mouse_move = function(event){
-	console.log(event);
+
+// inregistrez un ascultator in momentul in care se executa o functie
+addEventListener("keydown", key_down)
+
+var point_in_square = function(px, py, sx, sy, sw){
+	return
+		px >= sx && px < sx + sw &&
+		py >= sy && py < sy + sw;
 }
-mouse_move();
-var mx = clientX;
-var my = clientY; // coordonatele mouseului
-//hittest(mx, my) = {x: , y: }; hittestsquare
-//hittestsquare(x,y,mx,my)
-// doua ffor uri sa parcurgem fiecare patratel
-// mx = mx+x
-// mx = mx+x0
-// x = mx/d
-addEventListener("mousemove", mouse_move)
-var make_array = function(){ // colectam toate patrateleleintr-un singur array
+
+var hit_test = function(mx, my){
+	for(var j = 0; j < 4; j++){
+		for(var i = 0; i < 4; i++){
+			var sx = board_x0 + 60 * i;
+			var sy = board_y0 + 60 * j;
+			var sw = 50;
+			if(point_in_square(mx, my, sx, sy, sw)){
+				return {j: j, i: i};
+			}
+		}
+	}
+	return false;
+}
+
+var mouse_move = function(event){
+	var mx = event.clientX;
+	var my = event.clientY;
+	console.log(mx, my, hit_test(mx, my));
+}
+
+canvas.addEventListener("mousemove", mouse_move)
+
+// colectam toate patrateleleintr-un singur array
+var make_array = function(){
 	var m = [];
 	for(var i = 0; i < 4; i++){
 		for(var j = 0; j < 4; j++){
